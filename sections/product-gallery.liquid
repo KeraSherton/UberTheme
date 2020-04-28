@@ -1,0 +1,229 @@
+<div class='gallery-container-all'>
+
+{% assign images_per_row = section.settings.grid-size %}
+
+
+  
+    {% if section.settings.select_layout == false %}
+      <div class="">
+    {% endif %}
+
+      {% if section.settings.title != blank %}
+        <h2 class="gallery-title">
+          {{ section.settings.title | escape }}
+        </h2>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+<div class="gallery-bar">
+  {% for block in section.blocks %}
+    {%if block.type == "image"%}
+      <a href="{{all_products[block.settings.product].url}}">
+    <div class="gallery-image">
+    <div class="relative product_image"> 
+        <div class="reveal">   
+            <img src="{{ block.settings.gallery-image | img_url: '800x', crop: 'center' }}"
+            class="lazyload lazyload--fade-in gallery-image"
+            alt="{{ block.settings.image.alt }}"
+            data-src="{{ block.settings.gallery-image | img_url: '2048x', crop: 'center' }}"
+            />
+            {% include 'collection-price-tag' %}
+        
+        <div class="hidden">
+                <img src="{{ block.settings.hover-image | img_url: '800x', crop: 'center' }}" class="gallery_hover secondary lazyload gallery-image"
+                alt="{{ alt_text | escape }}" />
+            {% include 'collection-price-tag' %}
+            </div>
+      
+        </div></div>
+    </div>
+    </a> 
+    {%endif%}
+
+{%if block.type == "video_url"%}
+    {%if block.settings.video_url.type == "vimeo"%}
+        <a href="{{all_products[block.settings.product].url}}">
+            <div class="embed-container">
+                <iframe class="iframe" src="//player.vimeo.com/video/{{block.settings.video_url.id}}?autoplay=1&autopause=0&muted=1&loop=1&background=1&byline=0&portrait=0&badge=0" frameborder="0" allowfullscreen="" allow="autoplay" data-ready="true"></iframe>
+            </div>
+        </a>
+    {%endif%}
+    {%if block.settings.video_url.type == "youtube"%}
+        <a href="{{all_products[block.settings.product].url}}">
+            <div class="embed-container">
+                <iframe class="iframe" src="//www.youtube.com/embed/{{block.settings.video_url.id}}?rel=0&showinfo=0&vq=720&autoplay=1&controls=0&modestbranding=1&" frameborder="0" allowfullscreen></iframe>    
+            </div>
+        <a>
+    {%endif%}
+{%endif%}
+
+{%if block.type == "video"%}
+    <div class="gallery-image">
+      <a href="{{all_products[block.settings.product].url}}">
+       <div class="relative product_image">    
+                <video class="video-play" loop="loop" muted="" no-controls="" autoplay="autoplay" src="{{block.settings.url}}" playsinline="">
+                <source type="video/mp4">
+                </video>
+            {% include 'collection-price-tag' %}   
+        </div>
+      </a>
+    </div>
+{%endif%}
+
+{% endfor %}
+</div>   
+      
+ {%endif%}   
+</div>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Gallery",
+    "class": "image-gallery-section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Gallery"
+      },
+      {
+        "type": "checkbox",
+        "id": "select_layout",
+        "label": "Wide display"
+      },
+      {
+        "type": "range",
+        "id": "grid-size",
+        "label": "Images per row",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "default": 4
+      }
+    ],
+    "blocks": [
+       {
+        "type": "image",
+        "name": "Image Block",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "gallery-image",
+            "label": "Image"
+          },
+           {
+            "type": "image_picker",
+            "id": "hover-image",
+            "label": "Second image to hover"
+          },
+          {
+            "type":      "product",
+            "id":        "product",
+            "label":     "Select related product"
+          }
+        ]
+      },
+      {
+        "type": "video_url",
+        "name": "Youtube or Vimeo Video",
+        "settings": [
+          {
+            "type": "video_url",
+            "id": "video_url",
+            "label": "Video URL",
+            "accept": ["youtube", "vimeo"]
+          }
+        ]
+      },
+      { "type": "video",
+        "name": "Shopify Video",
+        "settings": [
+          {
+            "type": "url",
+            "id": "url",
+            "label": "Shopify Video URL"
+          },
+           {
+            "type":      "product",
+            "id":        "product",
+            "label":     "Select related product"
+          }
+        ]
+      }
+    ],
+     "presets": [
+      {
+        "name": "Gallery",
+        "category": "Image",
+        "blocks": [
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% style %}
+/*@media only screen and (min-width: 800px) and (max-width: 1199px){*/
+.gallery-container-all{
+  width:100%;
+}
+
+.gallery-bar{
+    width:100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; 
+    }
+.gallery-title{
+    text-align: center;
+}
+.gallery-image{
+  width: 100%;     
+}
+
+@media only screen and (max-width: 800px){
+    .gallery-bar{
+        grid-template-columns: 1fr 1fr;
+        }
+}
+
+.video-play {
+    width: 100%;
+    height: auto;
+}
+
+.reveal .hidden {
+    display: block !important; 
+    visibility: visible;
+    }
+.gallery-image:hover .reveal img { 
+    opacity: 1; 
+    }
+.reveal { 
+    position: relative;
+     }
+.reveal .hidden { 
+  position: absolute; 
+  z-index: -1;
+  top: 0; 
+  width: 100%; 
+  height: 100%;  
+  opacity: 0;}
+.reveal:hover .hidden { 
+  z-index: 1000;
+  opacity: 1;    
+}
+
+{% endstyle %}

@@ -1,0 +1,675 @@
+{%if section.settings.show_announcement%}
+        {%if section.settings.anno_home_page and template.name == 'index'%}
+            <div class="header-annoucementbar">
+                {{section.settings.promo_text}}
+                <a href="{{section.settings.announcement_link}}" class="header-annoucementbar-link">
+                {{section.settings.annoucement_link_text}}
+                </a>
+            </div>
+        {%elsif section.settings.anno_home_page==false%}
+        <div class="header-annoucementbar">
+            {{section.settings.promo_text}}
+            <a href="{{section.settings.announcement_link}}" class="header-annoucementbar-link">
+            {{section.settings.annoucement_link_text}}
+            </a>
+        </div>
+        {%endif%}
+{%endif%}
+
+<div id="header" class="{%if section.settings.header_opacity_on==true%} opacity {%else%} solid {%endif%} {%if section.settings.static_header==false%} sticky-header {%endif%} header-container " data-search-enabled="{{ section.settings.search_enabled }}">
+<div id="logo-place" class="{{section.settings.position}}-logo">
+    <a href="{{ shop.url }}" title="{{ shop.name }}" class="logotype">
+        {% if section.settings.logo != nil %}
+            <img class="logo" src="{{ section.settings.logo | img_url: '410x' }}" alt="{{ shop.name }}"/>
+        {% elsif section.settings.edit_logotype %}
+            {{section.settings.edit_logotype_text}}
+        {%else%}
+            {{ shop.name }}
+        {% endif %}
+    </a>
+</div>
+
+<div id="menu-links" class="{{section.settings.position}}-menu nav-links">
+        {% for link in linklists[section.settings.main_linklist].links %}
+            {% assign child_list_handle = link.title | handleize %}
+            {% if linklists[child_list_handle].links and linklists[child_list_handle].links.size > 0 %}
+            <li class="sub-menu-parent nav-links">
+                {{ link.title }}
+                <ul class="sub-menu nav-links {%if section.settings.sub_opacity_on==true%} sub-menu-opacity {%else%} sub-menu-solid {%endif%} ">
+                  {% for child_link in linklists[child_list_handle].links %}
+                  {% assign grand_child_list_handle = child_link.title | handle %}
+                  {% if linklists[grand_child_list_handle] and linklists[grand_child_list_handle].links.size > 0 %}
+                  <li class="sub-menu-links">
+                    <a class="sub-nav-links" href= "{{ child_link.url }}">{{ child_link.title }}</a>
+                  </li>
+                  {% else %}
+                  <li class="sub-menu-links">
+                    <a class="sub-nav-links" href= "{{ child_link.url }}">{{ child_link.title }}</a>
+                  </li>
+                  {% endif %}
+                  {% endfor %}        
+                </ul>
+              </li>
+              {% else %}
+                <a class="nav-links" href= "{{link.url }}">{{link.title }}</a>
+              {% endif %}
+              {% endfor %}
+</div>
+<div id="cart" class="{{section.settings.position}}-cart">
+    {% if section.settings.search_enabled %}
+            <a href="/search" class="icon-search">{% include 'icon-search' %}</a>
+        {% endif %}
+    <a class="icon-cart cart-button" href="/cart">
+        {%if section.settings.custom_cart !=nil%}
+            <img class="cart-icon" src="{{ section.settings.custom_cart | img_url: '30x' }}" alt="cart icon"/>
+           <span id="cart-counter">{{ cart.item_count }}</span>
+        {%else%}
+            <span class="cart-icon">{%include 'icon-cart'%}</span>
+            <span id="cart-counter"> {{ cart.item_count }}</span>
+        {%endif%}
+    </a>
+</div>
+
+    {% if shop.customer_accounts_enabled %}
+        {% if customer %}
+            <a href="/account">account</a>
+            {{ 'log out'  | customer_logout_link }}
+        {% else %}
+            {{ 'log in ' | customer_login_link }}
+            {{ 'register' | customer_register_link }}
+        {% endif %}
+    {% endif %}
+
+</div>
+
+
+
+{% style %}
+
+{{ section.settings.logo_font | font_face }}
+{{ section.settings.menu_font | font_face }}
+{{settings.general_font|font_face}}
+
+
+.header-container {
+    padding:{{section.settings.header-padding-left}}%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
+  }
+  
+#logo-place{
+    text-align: {{section.settings.position_logo}};
+    /*grid-column-start:{{section.settings.position_logo}};
+    grid-column-end: span 4;
+    order:{{section.settings.position_logo_order}};*/
+  }
+#menu-links{
+    display: flex;
+    justify-content: {{section.settings.position_menu}};
+    align-self: center;
+    padding-inline-start: 0;
+    /*grid-column-start:{{section.settings.position_menu}};
+    grid-column-end: span 2;
+    order: {{section.settings.position_menu_order}}*/
+}
+
+#cart{
+    justify-self: {{section.settings.position_cart}};
+    align-self: center;
+    /*grid-column-start:{{section.settings.position_cart}};
+    grid-column-end: span 1;
+    order: {{section.settings.position_cart_order}}*/
+}
+.classic-logo{
+    grid-column-start: 1;
+    grid-column-end: span 5;
+}
+.classic-menu{
+    grid-column-start: 6;
+    grid-column-end: span 4;
+}
+.classic-cart{
+    grid-column-start: 10;
+    grid-column-end: span 1;
+}
+.new-logo{
+    grid-column-start: 4;
+    grid-column-end: span 5;
+    order:1;
+}
+.new-menu{
+    grid-column-start: 1;
+    grid-column-end: span 3;
+    order:0;
+}
+.new-cart{
+    grid-column-start: 10;
+    grid-column-end: span 1;
+    order:2;
+}
+.new2-logo{
+    grid-column-start: 6;
+    grid-column-end: span 5;
+    order:2;
+}
+.new2-menu{
+    grid-column-start: 2;
+    grid-column-end: span 4;
+    order:1;
+}
+.new2-cart{
+    grid-column-start: 1;
+    grid-column-end: span 1;
+    order:0;
+}
+.new3-logo{
+    grid-column-start: 2;
+    grid-column-end: span 5;
+    order:1; 
+}
+.new3-menu{
+    grid-column-start: 7;
+    grid-column-end: span 4;
+    order:2;
+}
+.new3-cart{
+    grid-column-start: 1;
+    grid-column-end: span 1;
+    order:0;
+}
+
+.sub-menu-parent { 
+    position: relative;
+    display:inline-block;
+    padding:0 10px;
+}
+
+.sub-menu { 
+    list-style-type:none;
+    display:none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 100px;
+    transform: translateY(-2em);
+    z-index: 100000;
+    transition: all 0.3s ease-in-out 0s, visibility 0s linear 0.3s, z-index 0s linear 0.01s;
+    padding:10px;
+    }
+.sub-nav-links{
+        list-style-type:none;
+        color: {{section.settings.sub_nav_color}};
+        font-family: {{ section.settings.menu_font.family}};
+        font-style: {{ section.settings.menu_font.style }};
+        margin: 0;
+        text-transform: {{ section.settings.font_style }};
+}
+.sub-nav-links:hover{
+        color: {{section.settings.sub_nav_color_hov}}!important;
+    }
+.sub-menu-opacity{
+    background: {{section.settings.sub_menu_bg | color_modify: 'alpha', section.settings.header_opacity}}; 
+    }
+.sub-menu-solid{
+    background: {{section.settings.sub_menu_bg}};
+    }
+.sub-menu-links {
+    display:block;
+}
+.sub-menu-parent:hover .sub-menu {
+    display:block;
+    z-index: 100000;
+    transform: translateY(0%);
+    transition-delay: 0s, 0s, 0.3s; 
+}
+
+.header-annoucementbar {
+    background:{{section.settings.announcement_bg_color}}; 
+    color:{{section.settings.announcement_text_color}}; 
+    font-size:15px; 
+    padding:{{section.settings.announcement_high}}px;
+    text-align:{{section.settings.announcement_align}} ;
+}
+
+.header-annoucementbar a {
+    color:{{section.settings.announcement_link_color}}; 
+}
+
+#header {
+    color: {{section.settings.nav_color}};
+    font-family: {{settings.general_font.family}}, {{settings.general_font.fallback_families}};
+    font-style: {{ settings.general_font.style }};
+    line-height: 40px;
+    padding-top: {{section.settings.top_padding}}px;
+    padding-bottom: {{section.settings.bottom_padding}}px;
+    z-index: 5001;
+    width: 100%;
+    top: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.fixed {
+    position:fixed;
+    top:0;
+}
+
+.opacity{
+    background: {{section.settings.header_bg_color | color_modify: 'alpha', section.settings.header_opacity}}; 
+}
+.solid{
+    background: {{section.settings.header_bg_color}};
+}
+
+.logotype {
+    font-family: {{section.settings.logo_font.family}}, {{section.settings.logo_font.fallback_families}};
+    font-size: {{section.settings.logotype_size}}px;
+    color: {{section.settings.logo_color}};
+    font-style: {{ section.settings.logo_font.style }};
+    text-transform: {{ section.settings.logo_font_style }};
+}
+.logo{
+    width:{{section.settings.logo_width}}px;
+}
+.nav-links {
+    list-style-type:none;
+    color: {{section.settings.nav_color}};
+    font-family: {{ section.settings.menu_font.family}};
+    font-style: {{ section.settings.menu_font.style }};
+    margin: 0 1%;
+    text-transform: {{ section.settings.font_style }};
+}
+
+.nav-links:hover,
+.icon-cart:hover {
+    color: {{section.settings.nav_color_hov}}!important;
+}
+
+a.icon-cart,
+a.icon-search {
+    font-size: {{section.settings.font_size}}px !important;
+}
+.icon-search{
+    height: 18px;
+}
+.cart-icon{
+    height: 30px;
+    position: relative;
+    top: 7px;
+}
+#cart-counter{
+    color: {{section.settings.nav_color}};
+    font-size:0.8em;
+}
+
+{% endstyle %}
+
+{% schema %}
+
+{
+    "name": "Header",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "static_header",
+            "label": "Static header",
+            "default": true
+        }, {
+            "type": "color",
+            "id": "header_bg_color",
+            "label": "Background color",
+            "default": "#ACA8A8"
+        },{
+            "type": "checkbox",
+            "id": "header_opacity_on",
+            "label": "Opacity of background",
+            "default": false
+          }, {
+            "type": "range",
+            "id": "header_opacity",
+            "label": "Opacity of background",
+            "step": 0.1,
+            "min": 0,
+            "max": 0.9,
+            "default": 0.7
+        }, {
+            "type": "range",
+            "id": "top_padding",
+            "label": "Header bar top padding",
+            "min": 0,
+            "max": 30,
+            "default": 10,
+            "unit": "px"
+        }, {
+            "type": "range",
+            "id": "bottom_padding",
+            "label": "Header bar bottom padding",
+            "min": 0,
+            "max": 30,
+            "default": 5,
+            "unit": "px"
+        }, {
+            "type": "color",
+            "id": "nav_color",
+            "label": "Main menu",
+            "default": "#ffffff"
+        }, {
+            "type": "color",
+            "id": "nav_color_hov",
+            "label": "Main menu at pointing",
+            "default": "#000000"
+        },{
+            "type": "header",
+            "content": "Header positions"
+        },{
+            "type":      "select",
+            "id":        "position",
+            "label":     "position of elements in header",
+            "options": [
+              {
+                "value": "classic",
+                "label": "Logo Menu Cart"
+              }, {
+                "value": "new",
+                "label": "Menu Logo Cart"
+              },{
+                "value": "new2",
+                "label": "Cart Menu Logo"
+              },{
+                  "value": "new3",
+                  "label": "Cart Logo Menu"
+              }
+            ],
+            "default":   "classic"
+         }, {
+            "type":      "select",
+            "id":        "position_logo",
+            "label":     "Align of logo",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              }, {
+                "value": "center",
+                "label": "Center"
+              },{
+                "value": "right",
+                "label": "Right"
+              }
+            ],
+            "default":   "left"
+         }, {
+            "type":      "select",
+            "id":        "position_menu",
+            "label":     "Align of menu",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              }, {
+                "value": "center",
+                "label": "Center"
+              },{
+                "value": "flex-end",
+                "label": "Right"
+              },{
+                "value": "space-evenly",
+                "label": "Evenly space"
+              }
+            ],
+            "default":   "center"
+         }, {
+            "type":      "select",
+            "id":        "position_cart",
+            "label":     "Align of cart",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              }, {
+                "value": "center",
+                "label": "Center"
+              },{
+                "value": "flex-end",
+                "label": "Right"
+              }
+            ],
+            "default":   "flex-end"
+         }, {
+            "type": "range",
+            "id": "header-padding-left",
+            "label": "Left and right padding",
+            "min": 0,
+            "max": 20,
+            "default": 5
+        },  {
+            "type": "header",
+            "content": "Logo/Logotype"
+        }, {
+            "type": "color",
+            "id": "logo_color",
+            "label": "Logotype color",
+            "default": "#ffffff"
+        }, {
+            "type":    "font_picker",
+            "label":   "Logotype font",
+            "id":      "logo_font",
+            "default": "americana_n7"
+        }, {
+            "type": "range",
+            "id": "logotype_size",
+            "label": "Logotype size",
+            "min": 20,
+            "max": 60,
+            "default": 30,
+            "unit": "px"
+        }, {
+            "type": "checkbox",
+            "id": "edit_logotype",
+            "label": "Change logotype text",
+            "default": false
+        }, {
+            "type":"text",
+            "id":"edit_logotype_text",
+            "label":"New logotype text"
+        }, {
+            "type": "select",
+            "id": "logo_font_style",
+            "label": "Capitalization",
+            "options": [
+              {
+                "value": "none",
+                "label": "None"
+              },
+              {
+                "value": "uppercase",
+                "label": "Uppercase"
+              },
+              {
+                "value": "lowercase",
+                "label": "Lowercase"
+              }
+            ],
+            "default": "none"
+        },{
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo",
+            "info": "max 400px wide"
+        }, {
+            "type": "range",
+            "id": "logo_width",
+            "label": "Logo display width",
+            "step": 10,
+            "min": 110,
+            "max": 400,
+            "default": 300,
+            "unit": "px"
+        }, {
+            "type": "header",
+            "content": "Navigation"
+        }, {
+            "type": "link_list",
+            "id": "main_linklist",
+            "label": "Main menu",
+            "default": "main-menu"
+        },{
+            "type":    "font_picker",
+            "label":   "Menu font",
+            "id":      "menu_font",
+            "default": "open_sans_n4"
+        }, {
+            "type": "select",
+            "id": "font_style",
+            "label": "Capitalization",
+            "options": [
+              {
+                "value": "none",
+                "label": "None"
+              },
+              {
+                "value": "uppercase",
+                "label": "Uppercase"
+              },
+              {
+                "value": "lowercase",
+                "label": "Lowercase"
+              }
+            ],
+            "default": "none"
+        }, {
+            "type": "color",
+            "id": "sub_menu_bg",
+            "label": "Background color of submenu",
+            "default": "#ACA8A8"
+        },{
+            "type": "checkbox",
+            "id": "sub_opacity_on",
+            "label": "Opacity of submenu background",
+            "default": false
+          }, {
+            "type": "color",
+            "id": "sub_nav_color",
+            "label": "Submenu menu color",
+            "default": "#ffffff"
+        }, {
+            "type": "color",
+            "id": "sub_nav_color_hov",
+            "label": "Submenu menu at pointing",
+            "default": "#000000"
+        }, {
+            "type": "checkbox",
+            "id": "search_enabled",
+            "label": "Show search",
+            "default": false
+        }, {
+            "type": "image_picker",
+            "id": "custom_cart",
+            "label": "Custom cart image"
+        }, {
+            "type": "header",
+            "content": "Announcement bar"
+        }, {
+            "type": "checkbox",
+            "id": "show_announcement",
+            "label": "Show announcement"
+        }, {
+            "type": "checkbox",
+            "id": "anno_home_page",
+            "label": "Home page only"
+        }, {
+            "type": "text",
+            "id": "promo_text",
+            "label": "Text of annoucement"
+        }, {
+            "type": "url",
+            "id": "announcement_link",
+            "label": "Link"
+        }, {
+            "type": "text",
+            "id": "annoucement_link_text",
+            "label": "Text for Link"
+        }, {
+            "type": "range",
+            "id": "announcement_high",
+            "label": "High of annoucement bar",
+            "min": 0,
+            "max": 15,
+            "default": 7,
+            "unit": "px"
+        },{
+            "type": "color",
+            "id": "announcement_bg_color",
+            "label": "Bar",
+            "default": "#1b1f23"
+        }, {
+            "type": "color",
+            "id": "announcement_text_color",
+            "label": "Text",
+            "default": "#6b6b6b"
+        },{
+            "type": "color",
+            "id": "announcement_link_color",
+            "label": "Link text",
+            "default": "#6b6b6b"
+        },{
+            "type":      "select",
+            "id":        "announcement_align",
+            "label":     "Align of text",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },{
+                "value": "center",
+                "label": "Center"
+              }, {
+                "value": "right",
+                "label": "Right"
+              }
+            ],
+            "default":   "center"
+         }
+    ]
+}
+
+{% endschema %}
+
+
+{% javascript %}
+
+$(window).bind('scroll', function () {
+    if ($(window).scrollTop()) {
+        $('.sticky-header').addClass('fixed');
+    } else {
+        $('.sticky-header').removeClass('fixed');
+    }
+});
+
+{% endjavascript %}
+
+{%comment%}
+{
+    "type": "range",
+    "id": "position_logo2",
+    "label": "Position of logo",
+    "min": 1,
+    "max": 10,
+    "default": 2
+}, {
+    "type": "range",
+    "id": "position_menu2",
+    "label": "Position of menu",
+    "min": 1,
+    "max": 10,
+    "default": 7
+}, {
+    "type": "range",
+    "id": "position_cart2",
+    "label": "Position of cart",
+    "min": 1,
+    "max": 10,
+    "default": 10
+},
+{%endcomment%}

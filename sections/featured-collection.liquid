@@ -1,0 +1,32 @@
+{% assign collection= collections[section.settings.feature_collection] %}
+{% for product in collection.products %}
+    {%include 'product-collection-item'%}
+  {% else %}
+    <p>no matches</p>
+  {% endfor %}
+
+
+{% schema %}
+  {
+    "name": "Featured Collection",
+    "settings": [
+      {
+   "type": "collection",
+   "id": "feature_collection",
+   "label": "Feature collection"
+}
+    ],
+    "presets": [
+          {
+            "category": "Custom Content",
+            "name": "Featured Collection"            
+          }
+        ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

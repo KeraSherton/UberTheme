@@ -1,0 +1,260 @@
+{%style%}
+{{ section.settings.newsletter_font | font_face }}
+
+#newsletter_container{
+ width: 100%;
+ display: flex;
+ justify-content: {{section.settings.align_box}};
+ padding-top: {{section.settings.block_top_padding}}%;
+ padding-bottom: {{section.settings.block_bottom_padding}}%;
+ padding-left: 2%;
+ padding-right:2%;
+}
+.section_title-{{ section.id }}{
+  font-family: {{section.settings.newsletter_font.family}};
+  font-weight: {{section.settings.newsletter_font.weight}};
+  color: {{section.settings.title_color}};
+  font-size: {{section.settings.title_size}}px;
+  margin-bottom: 0.3em;
+  text-align: {{section.settings.position_text}};
+  padding: 1%;
+  margin-bottom: 2%;
+ }
+.input-group{
+  width: 100%;
+  display: flex;
+}
+
+.newsletter-input{
+  background-color: {{section.settings.bg_input_color}};
+  border: none;
+  width: 90%;
+  border-radius: 7px 0 0 7px;
+  padding: 2px;
+}
+.separate {
+  flex-direction:column;
+}
+.separate-input{
+  background-color: {{section.settings.bg_input_color}};
+  border: none;
+  width: 100%;
+  border-radius: 7px;
+  padding: {{section.settings.input_padding}}px;;
+}
+
+.inline-button{
+  background-color: {{section.settings.button_color}};
+  border: none;
+  border-radius: 7px;
+  margin: 4%;
+  justify-self: {{section.settings.position_button}};; 
+  color: {{section.settings.button_text_color}};
+  padding: {{section.settings.button_size_height}}px {{section.settings.button_size_width}}px; 
+}
+.newsletter-submit{
+  background-color: {{section.settings.button_color}};
+  border: none;
+  border-radius: 0 7px 7px 0;
+  color: {{section.settings.button_text_color}};
+  padding: {{section.settings.button_size_height}}px {{section.settings.button_size_width}}px; 
+}
+#privacy{
+    margin:4%;
+}
+{%endstyle%}
+<div id="newsletter_container">
+    <div class="newsletter_box">
+        <p class="section_title-{{ section.id }}">{{ section.settings.title }}</p>
+        {% form 'customer' %}
+        {{ form.errors | default_errors }}
+        {% if form.posted_successfully? %}
+          <p class="section_title-{{ section.id }}">{{ section.settings.confirmation }}</p>
+        {% else %}
+      <div class="{% if section.settings.input_location %} separate {%else%} input-group {% endif %}">
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input type="email"
+          name="contact[email]"
+          id="Email"
+          class="{% if section.settings.input_location %} separate-input {%else%} newsletter-input {% endif %}  "
+          value="{% if customer %}{{ customer.email }}{% endif %}"
+          placeholder="{{ section.settings.email_placeholder}}"
+          autocorrect="off"
+          autocapitalize="off">
+        <button type="submit" class="{% if section.settings.input_location %} inline-button {%else%} newsletter-submit  {% endif %}" name="commit" id="Subscribe">
+            <span class="newsletter__submit-text--large">{{ section.settings.submit}}</span>
+          </button>   
+      </div>
+      <input type="checkbox" id="privacy"> 
+          <label for="privacy">I agree with <a href="/policies/privacy-policy">Privacy Policy</a></label>
+    {% endif %}
+    {% endform %}
+  </div>
+</div>
+  {% schema %}
+{
+    "name": "Newsletter",
+    "settings": [
+    {
+        "type": "header",
+        "content": "General settings"
+      }, {
+        "type":"select",
+        "id":"align_box",
+        "label":"Align of elements",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "Left"
+          }, {
+            "value": "center",
+            "label": "Center"
+          },{
+            "value": "flex-end",
+            "label": "Right"
+          }
+        ],
+        "default":   "center"
+    }, {
+        "type": "range",
+        "id": "block_top_padding",
+        "label": "Block top padding",
+        "min": 0,
+        "max": 15,
+        "default": 5,
+        "unit": "%"
+    }, {
+        "type": "range",
+        "id": "block_bottom_padding",
+        "label": "Block bottom padding",
+        "min": 0,
+        "max": 15,
+        "default": 5,
+        "unit": "%"
+    }, {
+        "type": "text",
+        "id": "title",
+        "label": "Newsletter signup",
+        "default": "Newsletter",        
+        "info": "Subscribers will be added to your “accepts marketing” [customer list.](/admin/customers?query=&accepts_marketing=1)"
+    }, {
+        "type": "color",
+        "id": "title_color",
+        "label": "Title color",
+        "default": "#ffffff"
+    }, {
+        "type":    "font_picker",
+        "label":   "Font of section",
+        "id":      "newsletter_font",
+        "default": "americana_n7"
+    }, {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 5,
+      "max": 30,
+      "default": 19,
+      "unit": "px"
+    }, {
+      "type": "select",
+      "id": "position_text",
+      "label": "Align of title",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        }, {
+          "value": "center",
+          "label": "Center"
+        },{
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default":   "center"
+    }, {
+        "type": "text",
+        "id": "confirmation",
+        "label": "confirmation",
+        "default": "See You on Your mailbox :)"
+    }, {
+        "type": "text",
+        "id": "email_placeholder",
+        "label": "E-mail placeholder",
+        "default": "Your e-mail"
+    }, {
+        "type": "text",
+        "id": "submit",
+        "label": "Text on button",
+        "default": "Subscribe"
+    },  {
+        "type": "color",
+        "id": "button_color",
+        "label": "Color of button",
+        "default": "#ffffff"
+    }, {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color of text on button",
+      "default": "#000000"
+  },  {
+    "type": "checkbox",
+    "id": "input_location",
+    "label": "Separated newsletter",
+    "default": true
+  }, {
+    "type": "range",
+    "id": "button_size_width",
+    "label": "Button width",
+    "min": 0,
+    "max": 30,
+    "default": 10,
+    "unit": "px"
+  }, {
+    "type": "range",
+    "id": "button_size_height",
+    "label": "Button height",
+    "min": 0,
+    "max": 20,
+    "default": 3,
+    "unit": "px"
+  }, {
+    "type": "color",
+    "id": "bg_input_color",
+    "label": "Color of input background",
+    "default": "#EDDED7"
+  },{
+    "type": "range",
+    "id": "input_padding",
+    "label": "Input size",
+    "min": 0,
+    "max": 15,
+    "default": 5,
+    "unit": "px"
+    }, {
+        "type": "select",
+        "id": "position_button",
+        "label": "Position of button",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          }, {
+            "value": "center",
+            "label": "Center"
+          },{
+            "value": "right",
+            "label": "Right"
+          }
+        ],
+        "default":   "center"
+      }
+    ],
+    "presets":[
+    {
+      "category": "Custom Content",  
+      "name": "Newsletter"
+    }
+    ]
+}
+  {% endschema %}

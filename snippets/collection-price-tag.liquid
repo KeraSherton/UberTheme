@@ -1,0 +1,22 @@
+<div class="info-banner">
+    <span class="title">{{all_products[block.settings.product].title}}</span>
+    <p>
+        <span>{{all_products[block.settings.product].price | money}}</span>
+        <span class="was_price">
+            <span class="money">{{ all_products[block.settings.product].compare_at_price_max | money }}</span>
+        </span>
+    </p>
+</div>
+{%style%}
+.info-banner{
+    font-size: 14px;
+    position: absolute;
+    bottom: 0.75em;
+    width: 100%;
+    text-align: center;
+    z-index: 1;
+    color: #ffffff;
+    text-transform: uppercase;
+  }
+
+{%endstyle%}

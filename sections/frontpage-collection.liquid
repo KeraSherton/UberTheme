@@ -1,0 +1,58 @@
+<div class="grid-container">
+{% for product in collections.frontpage.products limit:6 %}
+  <div class="gallery-item">
+    <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+    {{ product.price | money }}
+    {% unless product.available %}<br><strong>sold out</strong>{% endunless %}
+    <a href="{{ product.url | within: collection }}">
+      <img src="{{ product.featured_image.src | img_url: 'medium' }}" alt="{{ product.featured_image.alt | escape }}">
+    </a>
+  </div>
+{% endfor %}
+</div>
+{% schema %}
+  {
+    "name": "Frontpage Collection",
+    "settings": [
+      {
+   "type": "collection",
+   "id": "frontpage_collection",
+   "label": "Frontpage collection"
+}
+    ],
+    "presets": [
+          {
+            "category": "Custom Content",
+            "name": "Frontpage Collection"            
+          }
+        ]
+  }
+{% endschema %}
+
+{% style %}
+.grid-container{
+  margin:10% 0;
+  width: 100%;
+  display: grid;
+  grid-column-gap: 5px;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 3%;
+}
+.gallery-item{
+  width: 1fr;
+}
+{% endstyle %}
+
+{% javascript %}
+{% endjavascript %}
+ {%comment%}
+ <!-- .grid-container{
+    width: 100%;
+    display: grid;
+    grid-column-gap: 5px;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.grid-item{
+    width: 1fr;
+} -->
+{%endcomment%}
